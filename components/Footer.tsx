@@ -1,6 +1,12 @@
 import Link from "next/link";
+import { getContact, getSettings } from "@/lib/content";
 
-export default function Footer() {
+export default async function Footer() {
+  const [contact, footer] = await Promise.all([
+    getContact(),
+    getSettings("footer"),
+  ]);
+
   return (
     <footer className="mt-24 bg-ink text-white">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-3">
@@ -11,10 +17,7 @@ export default function Footer() {
             </span>
             <span className="text-xl font-extrabold">سكاينوفا</span>
           </div>
-          <p className="text-sm leading-7 text-white/70">
-            مصنع متخصص في تصميم وتصنيع أجهزة التجميل والعناية بالبشرة بأعلى
-            معايير الجودة العالمية، وخدمة صالونات ومراكز التجميل في العالم العربي.
-          </p>
+          <p className="text-sm leading-7 text-white/70">{footer.description}</p>
         </div>
 
         <div>
@@ -31,9 +34,9 @@ export default function Footer() {
         <div>
           <h3 className="mb-4 text-sm font-bold uppercase tracking-wider text-gold-400">تواصل معنا</h3>
           <ul className="space-y-2.5 text-sm text-white/80">
-            <li>بغداد — المنصور، شارع 14 رمضان</li>
-            <li dir="ltr" className="text-right">+964 770 000 0000</li>
-            <li>info@skynova-beauty.com</li>
+            <li>{contact.address}</li>
+            <li dir="ltr" className="text-right">{contact.phone}</li>
+            <li>{contact.email}</li>
           </ul>
         </div>
       </div>

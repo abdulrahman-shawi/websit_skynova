@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# سكاينوفا — SKYNOVA
 
-## Getting Started
+موقع شركة سكاينوفا لأجهزة التجميل والليزر — مبني بـ Next.js 14 (App Router) و Tailwind CSS، مع **داشبورد تحكم كامل** بمحتوى الموقع مخزّن في قاعدة بيانات [Neon Postgres](https://neon.tech).
 
-First, run the development server:
+## التشغيل محلياً
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+افتح [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## إعداد الداشبورد
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. أنشئ ملف `.env.local` في جذر المشروع (انسخ `.env.example`):
 
-## Learn More
+```env
+DATABASE_URL="postgresql://user:password@host/dbname?sslmode=require"
+ADMIN_PASSWORD="كلمة-مرور-قوية"
+SESSION_SECRET="مفتاح-عشوائي-طويل"
+```
 
-To learn more about Next.js, take a look at the following resources:
+- `DATABASE_URL`: من لوحة Neon → Connection Details.
+- `SESSION_SECRET`: ولّده بأمر `openssl rand -base64 32`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. شغّل الموقع وادخل على [http://localhost:3000/admin](http://localhost:3000/admin) — سيطلب منك كلمة المرور.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+3. من لوحة التحكم اضغط **«تعبئة المحتوى الافتراضي»** — ينشئ الجداول تلقائياً (إن لم تكن موجودة) ويملؤها بالمحتوى الحالي للموقع. بديل يدوي: نفّذ محتوى `db/schema.sql` في محرر SQL الخاص بـ Neon.
 
-## Deploy on Vercel
+4. عدّل المنتجات أو الأسئلة الشائعة أو الشهادات أو الفعاليات أو النصوص العامة من الأقسام — كل تغيير يظهر على الموقع مباشرة.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## ما الذي يتحكم به الداشبورد؟
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| القسم | الموقع المتأثر |
+|---|---|
+| المنتجات والأجهزة | `/products` + الأجهزة المميزة في الرئيسية |
+| الأسئلة الشائعة | قسم FAQ في الرئيسية (بما فيها بيانات SEO المنظمة) |
+| الشهادات | `/certificates` + شريط الشهادات في الرئيسية |
+| المؤتمرات والفعاليات | `/gallery` + قسم الفعاليات في الرئيسية |
+| الإعدادات | نصوص الهيرو، «من نحن»، الضمان، معلومات التواصل ورقم الواتساب، صفحة من نحن، صفحات الشهادات والمعرض، الفوتر |
+
+> **ملاحظة:** إذا لم تُضبط `DATABASE_URL` يعمل الموقع بمحتواه الافتراضي المدمج ولا ينكسر — لكن التعديلات من الداشبورد تتطلب قاعدة البيانات.
+
+## النشر على Vercel
+
+1. ارفع المشروع إلى GitHub واربطه بمشروع Vercel.
+2. في Vercel → **Settings → Environment Variables** أضف نفس المتغيرات الثلاثة (`DATABASE_URL`, `ADMIN_PASSWORD`, `SESSION_SECRET`).
+3. Deploy — ثم ادخل على `https://your-domain.com/admin`.
+
+## بنية المشروع
+
+```
+app/
+  (site)/            # صفحات الموقع العامة (تقرأ من DB مع تراجع للافتراضي)
+  admin/             # الداشبورد
+    login/           # صفحة الدخول
+    (panel)/         # الأقسام المحمية (لوحة التحكم، المنتجات، الإعدادات...)
+  api/admin/         # مسارات CRUD + login/logout + seed
+components/
+  admin/             # مكونات الداشبورد (ثنائية اللغة AR/EN)
+lib/
+  defaults.ts        # المحتوى الافتراضي (مصدر البذر والتراجع)
+  content.ts         # دوال القراءة العامة من DB
+  db.ts              # عميل Neon
+  auth.ts            # توقيع الجلسات (HMAC)
+db/schema.sql        # تعريف الجداول
+middleware.ts        # حماية مسارات /admin
+```

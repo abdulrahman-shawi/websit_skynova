@@ -2,14 +2,14 @@
 
 import { useState } from "react";
 
-export default function ContactForm() {
+export default function ContactForm({ whatsapp }: { whatsapp: string }) {
   const [form, setForm] = useState({ name: "", phone: "", subject: "", message: "" });
   const [sent, setSent] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const text = `استفسار من موقع سكاينوفا:%0a%0aالاسم: ${form.name}%0aالهاتف: ${form.phone}%0aالموضوع: ${form.subject}%0aالرسالة: ${form.message}`;
-    window.open(`https://wa.me/9647700000000?text=${text}`, "_blank");
+    window.open(`https://wa.me/${whatsapp}?text=${text}`, "_blank");
     setSent(true);
   };
 

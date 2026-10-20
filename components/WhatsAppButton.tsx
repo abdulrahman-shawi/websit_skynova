@@ -1,7 +1,10 @@
-export default function WhatsAppButton() {
+import { getContact } from "@/lib/content";
+
+export default async function WhatsAppButton() {
+  const contact = await getContact();
   return (
     <a
-      href="https://wa.me/9647700000000"
+      href={`https://wa.me/${contact.whatsapp}`}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="محادثة واتساب"
