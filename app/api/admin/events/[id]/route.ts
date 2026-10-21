@@ -24,15 +24,16 @@ export async function PUT(req: NextRequest, { params }: Params) {
     const title = asString(body?.title);
     if (!title) return badRequest("title is required");
 
-    await db`
-      UPDATE events SET
-        title = ${title},
-        type = ${asString(body?.type)},
-        location = ${asString(body?.location)},
-        date_label = ${asString(body?.date)},
-        description = ${asString(body?.description)}
-      WHERE id = ${id}
-    `;
+    await db.event.update({
+      where: { id },
+      data: {
+        title,
+        type: asString(body?.type),
+        location: asString(body?.location),
+        dateLabel: asString(body?.date),
+        description: asString(body?.description),
+      },
+    });
     REVALIDATE_PATHS.forEach((path) => revalidatePath(path));
     return NextResponse.json({ ok: true });
   } catch {
@@ -47,7 +48,7 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
   const id = Number(params.id);
   if (!Number.isInteger(id)) return badRequest("invalid id");
   try {
-    await db`DELETE FROM events WHERE id = ${id}`;
+    await db.event.delete({ where: { id } });
     REVALIDATE_PATHS.forEach((path) => revalidatePath(path));
     return NextResponse.json({ ok: true });
   } catch {

@@ -30,10 +30,12 @@ const dict = {
     "dash.counts": "محتوى الموقع",
     "dash.seed": "تعبئة المحتوى الافتراضي",
     "dash.seedHint":
-      "ينشئ الجداول (إن لم تكن موجودة) ويملؤها بالمحتوى الحالي للموقع. يعمل فقط على الجداول الفارغة.",
+      "يملأ الجداول الفارغة بالمحتوى الحالي للموقع. أنشئ الجداول أولاً بأمر: npx prisma migrate deploy",
     "dash.seeding": "جارٍ التعبئة...",
     "dash.seedDone": "تمت التعبئة بنجاح",
     "dash.seedFailed": "فشلت التعبئة — تحقق من DATABASE_URL",
+    "dash.seedNeedsMigration":
+      "الجداول غير موجودة بعد — شغّل أمر الترحيل أولاً (يحتاج DATABASE_URL في ملف .env):",
     "dash.quickLinks": "أقسام الداشبورد",
 
     "entity.add": "إضافة جديد",
@@ -85,10 +87,12 @@ const dict = {
     "dash.counts": "Site content",
     "dash.seed": "Load default content",
     "dash.seedHint":
-      "Creates the tables (if missing) and fills them with the current site content. Only fills empty tables.",
+      "Fills empty tables with the current site content. Create the tables first with: npx prisma migrate deploy",
     "dash.seeding": "Loading...",
     "dash.seedDone": "Content loaded successfully",
     "dash.seedFailed": "Seeding failed — check DATABASE_URL",
+    "dash.seedNeedsMigration":
+      "Tables are not created yet — run the migration command first (needs DATABASE_URL in .env):",
     "dash.quickLinks": "Dashboard sections",
 
     "entity.add": "Add new",

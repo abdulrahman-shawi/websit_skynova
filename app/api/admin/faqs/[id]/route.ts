@@ -22,12 +22,10 @@ export async function PUT(req: NextRequest, { params }: Params) {
     const question = asString(body?.question);
     if (!question) return badRequest("question is required");
 
-    await db`
-      UPDATE faqs SET
-        question = ${question},
-        answer = ${asString(body?.answer)}
-      WHERE id = ${id}
-    `;
+    await db.faq.update({
+      where: { id },
+      data: { question, answer: asString(body?.answer) },
+    });
     revalidatePath("/");
     return NextResponse.json({ ok: true });
   } catch {
@@ -42,7 +40,7 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
   const id = Number(params.id);
   if (!Number.isInteger(id)) return badRequest("invalid id");
   try {
-    await db`DELETE FROM faqs WHERE id = ${id}`;
+    await db.faq.delete({ where: { id } });
     revalidatePath("/");
     return NextResponse.json({ ok: true });
   } catch {

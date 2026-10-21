@@ -24,16 +24,17 @@ export async function PUT(req: NextRequest, { params }: Params) {
     const name = asString(body?.name);
     if (!name) return badRequest("name is required");
 
-    await db`
-      UPDATE certificates SET
-        name = ${name},
-        title = ${asString(body?.title)},
-        issuer = ${asString(body?.issuer)},
-        description = ${asString(body?.description)},
-        scope = ${asString(body?.scope)},
-        year = ${asString(body?.year)}
-      WHERE id = ${id}
-    `;
+    await db.certificate.update({
+      where: { id },
+      data: {
+        name,
+        title: asString(body?.title),
+        issuer: asString(body?.issuer),
+        description: asString(body?.description),
+        scope: asString(body?.scope),
+        year: asString(body?.year),
+      },
+    });
     REVALIDATE_PATHS.forEach((path) => revalidatePath(path));
     return NextResponse.json({ ok: true });
   } catch {
@@ -48,7 +49,7 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
   const id = Number(params.id);
   if (!Number.isInteger(id)) return badRequest("invalid id");
   try {
-    await db`DELETE FROM certificates WHERE id = ${id}`;
+    await db.certificate.delete({ where: { id } });
     REVALIDATE_PATHS.forEach((path) => revalidatePath(path));
     return NextResponse.json({ ok: true });
   } catch {

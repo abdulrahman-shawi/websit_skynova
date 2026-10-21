@@ -16,9 +16,10 @@ export async function GET() {
   const db = getDb();
   if (!db) return serverError();
   try {
-    const rows =
-      await db`SELECT * FROM certificates ORDER BY display_order, id`;
-    return NextResponse.json({ items: rows });
+    const items = await db.certificate.findMany({
+      orderBy: [{ displayOrder: "asc" }, { id: "asc" }],
+    });
+    return NextResponse.json({ items });
   } catch {
     return serverError();
   }
@@ -33,21 +34,20 @@ export async function POST(req: NextRequest) {
     const name = asString(body?.name);
     if (!name) return badRequest("name is required");
 
-    const rows = await db`
-      INSERT INTO certificates (name, title, issuer, description, scope, year, display_order)
-      VALUES (
-        ${name},
-        ${asString(body?.title)},
-        ${asString(body?.issuer)},
-        ${asString(body?.description)},
-        ${asString(body?.scope)},
-        ${asString(body?.year)},
-        COALESCE((SELECT MAX(display_order) FROM certificates), 0) + 1
-      )
-      RETURNING id
-    `;
+    const max = await db.certificate.aggregate({ _max: { displayOrder: true } });
+    const item = await db.certificate.create({
+      data: {
+        name,
+        title: asString(body?.title),
+        issuer: asString(body?.issuer),
+        description: asString(body?.description),
+        scope: asString(body?.scope),
+        year: asString(body?.year),
+        displayOrder: (max._max.displayOrder ?? 0) + 1,
+      },
+    });
     REVALIDATE_PATHS.forEach((path) => revalidatePath(path));
-    return NextResponse.json({ ok: true, id: rows[0]?.id });
+    return NextResponse.json({ ok: true, id: item.id });
   } catch {
     return serverError();
   }

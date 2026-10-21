@@ -26,18 +26,18 @@ export async function PUT(req: NextRequest, { params }: Params) {
     const name = asString(body?.name);
     if (!name) return badRequest("name is required");
 
-    await db`
-      UPDATE products SET
-        name = ${name},
-        category = ${asString(body?.category)},
-        badge = ${asString(body?.badge)},
-        description = ${asString(body?.description)},
-        price = ${asString(body?.price)},
-        guarantee = ${asNullableString(body?.guarantee)},
-        featured = ${asBoolean(body?.featured)},
-        updated_at = now()
-      WHERE id = ${id}
-    `;
+    await db.product.update({
+      where: { id },
+      data: {
+        name,
+        category: asString(body?.category),
+        badge: asString(body?.badge),
+        description: asString(body?.description),
+        price: asString(body?.price),
+        guarantee: asNullableString(body?.guarantee),
+        featured: asBoolean(body?.featured),
+      },
+    });
     REVALIDATE_PATHS.forEach((path) => revalidatePath(path));
     return NextResponse.json({ ok: true });
   } catch {
@@ -52,7 +52,7 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
   const id = Number(params.id);
   if (!Number.isInteger(id)) return badRequest("invalid id");
   try {
-    await db`DELETE FROM products WHERE id = ${id}`;
+    await db.product.delete({ where: { id } });
     REVALIDATE_PATHS.forEach((path) => revalidatePath(path));
     return NextResponse.json({ ok: true });
   } catch {

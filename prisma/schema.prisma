@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id           Int      @id @default(autoincrement())
+  name         String
+  category     String   @default("")
+  badge        String   @default("")
+  description  String   @default("")
+  price        String   @default("")
+  guarantee    String?
+  featured     Boolean  @default(false)
+  isActive     Boolean  @default(true) @map("is_active")
+  displayOrder Int      @default(0) @map("display_order")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("products")
+}
+
+model Faq {
+  id           Int    @id @default(autoincrement())
+  question     String
+  answer       String @default("")
+  displayOrder Int    @default(0) @map("display_order")
+
+  @@map("faqs")
+}
+
+model Certificate {
+  id           Int    @id @default(autoincrement())
+  name         String
+  title        String @default("")
+  issuer       String @default("")
+  description  String @default("")
+  scope        String @default("")
+  year         String @default("")
+  displayOrder Int    @default(0) @map("display_order")
+
+  @@map("certificates")
+}
+
+model Event {
+  id           Int    @id @default(autoincrement())
+  title        String
+  type         String @default("")
+  location     String @default("")
+  dateLabel    String @default("") @map("date_label")
+  description  String @default("")
+  displayOrder Int    @default(0) @map("display_order")
+
+  @@map("events")
+}
+
+model SiteSetting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("site_settings")
+}

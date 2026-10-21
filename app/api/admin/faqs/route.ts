@@ -14,8 +14,10 @@ export async function GET() {
   const db = getDb();
   if (!db) return serverError();
   try {
-    const rows = await db`SELECT * FROM faqs ORDER BY display_order, id`;
-    return NextResponse.json({ items: rows });
+    const items = await db.faq.findMany({
+      orderBy: [{ displayOrder: "asc" }, { id: "asc" }],
+    });
+    return NextResponse.json({ items });
   } catch {
     return serverError();
   }
@@ -30,17 +32,16 @@ export async function POST(req: NextRequest) {
     const question = asString(body?.question);
     if (!question) return badRequest("question is required");
 
-    const rows = await db`
-      INSERT INTO faqs (question, answer, display_order)
-      VALUES (
-        ${question},
-        ${asString(body?.answer)},
-        COALESCE((SELECT MAX(display_order) FROM faqs), 0) + 1
-      )
-      RETURNING id
-    `;
+    const max = await db.faq.aggregate({ _max: { displayOrder: true } });
+    const item = await db.faq.create({
+      data: {
+        question,
+        answer: asString(body?.answer),
+        displayOrder: (max._max.displayOrder ?? 0) + 1,
+      },
+    });
     revalidatePath("/");
-    return NextResponse.json({ ok: true, id: rows[0]?.id });
+    return NextResponse.json({ ok: true, id: item.id });
   } catch {
     return serverError();
   }

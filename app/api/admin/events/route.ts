@@ -16,9 +16,11 @@ export async function GET() {
   const db = getDb();
   if (!db) return serverError();
   try {
-    const rows =
-      await db`SELECT id, title, type, location, date_label AS date, description, display_order FROM events ORDER BY display_order, id`;
-    return NextResponse.json({ items: rows });
+    const rows = await db.event.findMany({
+      orderBy: [{ displayOrder: "asc" }, { id: "asc" }],
+    });
+    const items = rows.map((row) => ({ ...row, date: row.dateLabel }));
+    return NextResponse.json({ items });
   } catch {
     return serverError();
   }
@@ -33,20 +35,19 @@ export async function POST(req: NextRequest) {
     const title = asString(body?.title);
     if (!title) return badRequest("title is required");
 
-    const rows = await db`
-      INSERT INTO events (title, type, location, date_label, description, display_order)
-      VALUES (
-        ${title},
-        ${asString(body?.type)},
-        ${asString(body?.location)},
-        ${asString(body?.date)},
-        ${asString(body?.description)},
-        COALESCE((SELECT MAX(display_order) FROM events), 0) + 1
-      )
-      RETURNING id
-    `;
+    const max = await db.event.aggregate({ _max: { displayOrder: true } });
+    const item = await db.event.create({
+      data: {
+        title,
+        type: asString(body?.type),
+        location: asString(body?.location),
+        dateLabel: asString(body?.date),
+        description: asString(body?.description),
+        displayOrder: (max._max.displayOrder ?? 0) + 1,
+      },
+    });
     REVALIDATE_PATHS.forEach((path) => revalidatePath(path));
-    return NextResponse.json({ ok: true, id: rows[0]?.id });
+    return NextResponse.json({ ok: true, id: item.id });
   } catch {
     return serverError();
   }

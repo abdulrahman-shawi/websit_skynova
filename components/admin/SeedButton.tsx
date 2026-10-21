@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useLanguage } from "./LanguageProvider";
 
-type Status = "idle" | "loading" | "done" | "error";
+type Status = "idle" | "loading" | "done" | "error" | "needsMigration";
 
 export default function SeedButton() {
   const { t } = useLanguage();
@@ -14,6 +14,10 @@ export default function SeedButton() {
     setStatus("loading");
     try {
       const res = await fetch("/api/admin/seed", { method: "POST" });
+      if (res.status === 409) {
+        setStatus("needsMigration");
+        return;
+      }
       if (!res.ok) throw new Error();
       const data = (await res.json()) as { filled?: string[] };
       setFilled(data.filled ?? []);
@@ -43,6 +47,14 @@ export default function SeedButton() {
       )}
       {status === "error" && (
         <p className="mt-3 text-sm font-bold text-red-500">{t("dash.seedFailed")}</p>
+      )}
+      {status === "needsMigration" && (
+        <p className="mt-3 rounded-2xl bg-gold-300/20 px-4 py-3 text-sm font-bold text-gold-600">
+          {t("dash.seedNeedsMigration")}
+          <code dir="ltr" className="mt-1 block text-xs font-bold">
+            npx prisma migrate deploy
+          </code>
+        </p>
       )}
     </div>
   );

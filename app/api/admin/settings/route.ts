@@ -21,17 +21,6 @@ const SETTINGS_PATHS: Record<keyof SiteSettings, string[]> = {
   footer: ["/", "/products", "/about", "/gallery", "/certificates", "/contact"],
 };
 
-function parseJson(value: unknown): unknown {
-  if (typeof value === "string") {
-    try {
-      return JSON.parse(value);
-    } catch {
-      return undefined;
-    }
-  }
-  return value;
-}
-
 export async function GET() {
   if (!isAdminRequest()) return unauthorized();
   const db = getDb();
@@ -39,11 +28,11 @@ export async function GET() {
 
   const settings = { ...DEFAULT_SETTINGS } as Record<string, unknown>;
   try {
-    const rows = await db`SELECT key, value FROM site_settings`;
+    const rows = await db.siteSetting.findMany();
     for (const row of rows) {
-      const key = String(row.key);
+      const key = row.key;
       const base = DEFAULT_SETTINGS[key as keyof SiteSettings];
-      const stored = parseJson(row.value);
+      const stored = row.value;
       if (base && stored && typeof stored === "object") {
         settings[key] = {
           ...(base as Record<string, unknown>),
@@ -69,11 +58,11 @@ export async function PUT(req: NextRequest) {
       return badRequest("invalid settings key or value");
     }
 
-    await db`
-      INSERT INTO site_settings (key, value, updated_at)
-      VALUES (${key}, ${JSON.stringify(value)}::jsonb, now())
-      ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = now()
-    `;
+    await db.siteSetting.upsert({
+      where: { key },
+      create: { key, value },
+      update: { value },
+    });
 
     SETTINGS_PATHS[key].forEach((path) => revalidatePath(path));
     return NextResponse.json({ ok: true });

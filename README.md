@@ -13,7 +13,7 @@ npm run dev
 
 ## إعداد الداشبورد
 
-1. أنشئ ملف `.env.local` في جذر المشروع (انسخ `.env.example`):
+1. أنشئ ملف `.env` في جذر المشروع (مستثنى من Git تلقائياً) وضع فيه:
 
 ```env
 DATABASE_URL="postgresql://user:password@host/dbname?sslmode=require"
@@ -23,12 +23,20 @@ SESSION_SECRET="مفتاح-عشوائي-طويل"
 
 - `DATABASE_URL`: من لوحة Neon → Connection Details.
 - `SESSION_SECRET`: ولّده بأمر `openssl rand -base64 32`.
+- ملف `.env.example` قالب جاهز، ويمكنك أيضاً وضع `ADMIN_PASSWORD` و `SESSION_SECRET` في `.env.local` — كلاهما يعمل.
 
-2. شغّل الموقع وادخل على [http://localhost:3000/admin](http://localhost:3000/admin) — سيطلب منك كلمة المرور.
+2. أنشئ الجداول في Neon بأمر الترحيل:
 
-3. من لوحة التحكم اضغط **«تعبئة المحتوى الافتراضي»** — ينشئ الجداول تلقائياً (إن لم تكن موجودة) ويملؤها بالمحتوى الحالي للموقع. بديل يدوي: نفّذ محتوى `db/schema.sql` في محرر SQL الخاص بـ Neon.
+```bash
+npm run db:migrate
+# أو مباشرة: npx prisma migrate deploy
+```
 
-4. عدّل المنتجات أو الأسئلة الشائعة أو الشهادات أو الفعاليات أو النصوص العامة من الأقسام — كل تغيير يظهر على الموقع مباشرة.
+3. شغّل الموقع (`npm run dev`) وادخل على [http://localhost:3000/admin](http://localhost:3000/admin) — سيطلب منك كلمة المرور.
+
+4. من لوحة التحكم اضغط **«تعبئة المحتوى الافتراضي»** — يملأ الجداول الفارغة بالمحتوى الحالي للموقع.
+
+5. عدّل المنتجات أو الأسئلة الشائعة أو الشهادات أو الفعاليات أو النصوص العامة من الأقسام — كل تغيير يظهر على الموقع مباشرة.
 
 ## ما الذي يتحكم به الداشبورد؟
 
@@ -62,8 +70,10 @@ components/
 lib/
   defaults.ts        # المحتوى الافتراضي (مصدر البذر والتراجع)
   content.ts         # دوال القراءة العامة من DB
-  db.ts              # عميل Neon
+  db.ts              # عميل Prisma + محوّل Neon
   auth.ts            # توقيع الجلسات (HMAC)
-db/schema.sql        # تعريف الجداول
+prisma/
+  schema.prisma      # نماذج الجداول (مصدر الحقيقة)
+  migrations/        # ترحيلات SQL الجاهزة (0001_init)
 middleware.ts        # حماية مسارات /admin
 ```

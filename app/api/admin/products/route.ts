@@ -18,9 +18,10 @@ export async function GET() {
   const db = getDb();
   if (!db) return serverError();
   try {
-    const rows =
-      await db`SELECT * FROM products ORDER BY display_order, id`;
-    return NextResponse.json({ items: rows });
+    const items = await db.product.findMany({
+      orderBy: [{ displayOrder: "asc" }, { id: "asc" }],
+    });
+    return NextResponse.json({ items });
   } catch {
     return serverError();
   }
@@ -35,22 +36,21 @@ export async function POST(req: NextRequest) {
     const name = asString(body?.name);
     if (!name) return badRequest("name is required");
 
-    const rows = await db`
-      INSERT INTO products (name, category, badge, description, price, guarantee, featured, display_order)
-      VALUES (
-        ${name},
-        ${asString(body?.category)},
-        ${asString(body?.badge)},
-        ${asString(body?.description)},
-        ${asString(body?.price)},
-        ${asNullableString(body?.guarantee)},
-        ${asBoolean(body?.featured)},
-        COALESCE((SELECT MAX(display_order) FROM products), 0) + 1
-      )
-      RETURNING id
-    `;
+    const max = await db.product.aggregate({ _max: { displayOrder: true } });
+    const item = await db.product.create({
+      data: {
+        name,
+        category: asString(body?.category),
+        badge: asString(body?.badge),
+        description: asString(body?.description),
+        price: asString(body?.price),
+        guarantee: asNullableString(body?.guarantee),
+        featured: asBoolean(body?.featured),
+        displayOrder: (max._max.displayOrder ?? 0) + 1,
+      },
+    });
     REVALIDATE_PATHS.forEach((path) => revalidatePath(path));
-    return NextResponse.json({ ok: true, id: rows[0]?.id });
+    return NextResponse.json({ ok: true, id: item.id });
   } catch {
     return serverError();
   }
