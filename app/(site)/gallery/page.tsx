@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getEvents, getSettings } from "@/lib/content";
+import { getEvents, getSettings, formatDateLabel } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "المؤتمرات واللقاءات",
@@ -74,7 +74,7 @@ export default async function Gallery() {
             </div>
             <div className="p-6">
               <div className="flex items-center gap-4 text-xs font-bold text-ink/50">
-                <span>{event.date}</span>
+                <span>{formatDateLabel(event.date)}</span>
                 <span className="h-1 w-1 rounded-full bg-blush-400" />
                 <span>{event.location}</span>
               </div>

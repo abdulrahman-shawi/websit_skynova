@@ -7,6 +7,7 @@ import {
   getFaqs,
   getProducts,
   getSettings,
+  formatDateLabel,
 } from "@/lib/content";
 
 export const revalidate = 60;
@@ -310,7 +311,7 @@ export default async function Home() {
                 </div>
                 <div className="p-6">
                   <div className="flex items-center gap-4 text-xs font-bold text-ink/50">
-                    <span>{event.date}</span>
+                    <span>{formatDateLabel(event.date)}</span>
                     <span className="h-1 w-1 rounded-full bg-blush-400" />
                     <span>{event.location}</span>
                   </div>

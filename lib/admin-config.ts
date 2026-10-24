@@ -4,7 +4,7 @@ type L = { ar: string; en: string };
 
 export type FieldDef = {
   name: string;
-  type: "text" | "textarea" | "checkbox" | "image";
+  type: "text" | "textarea" | "checkbox" | "image" | "date";
   label: L;
   required?: boolean;
 };
@@ -72,7 +72,7 @@ export const ENTITY_DEFS: Record<EntityKey, EntityDef> = {
     fields: [
       { name: "title", type: "text", label: { ar: "اسم الفعالية", en: "Event title" }, required: true },
       { name: "type", type: "text", label: { ar: "النوع (معرض دولي/ورشة...)", en: "Type" } },
-      { name: "date", type: "text", label: { ar: "التاريخ", en: "Date" } },
+      { name: "date", type: "date", label: { ar: "التاريخ", en: "Date" } },
       { name: "location", type: "text", label: { ar: "الموقع", en: "Location" } },
       { name: "image", type: "image", label: { ar: "صورة الفعالية", en: "Event image" } },
       { name: "description", type: "textarea", label: { ar: "الوصف", en: "Description" } },

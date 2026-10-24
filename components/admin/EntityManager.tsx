@@ -10,6 +10,13 @@ type Item = Record<string, unknown> & { id: number };
 const inputClass =
   "w-full rounded-2xl border border-blush-200 bg-background px-4 py-2.5 text-sm outline-none transition-colors focus:border-blush-500";
 
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+
+function toDateInputValue(value: unknown): string {
+  const str = typeof value === "string" ? value.trim() : "";
+  return ISO_DATE.test(str) ? str : "";
+}
+
 export default function EntityManager({ def }: { def: EntityDef }) {
   const { lang, t } = useLanguage();
   const [items, setItems] = useState<Item[]>([]);
@@ -188,6 +195,13 @@ export default function EntityManager({ def }: { def: EntityDef }) {
                         value={String(form[field.name] ?? "")}
                         onChange={(e) => setForm({ ...form, [field.name]: e.target.value })}
                         className={`${inputClass} resize-none`}
+                      />
+                    ) : field.type === "date" ? (
+                      <input
+                        type="date"
+                        value={toDateInputValue(form[field.name])}
+                        onChange={(e) => setForm({ ...form, [field.name]: e.target.value })}
+                        className={inputClass}
                       />
                     ) : (
                       <input

@@ -99,6 +99,21 @@ export async function getEvents(): Promise<EventItem[]> {
   }
 }
 
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+
+export function formatDateLabel(value: string): string {
+  const str = value.trim();
+  if (!ISO_DATE.test(str)) return str;
+  const [year, month, day] = str.split("-").map(Number);
+  const date = new Date(year, month - 1, day);
+  if (Number.isNaN(date.getTime())) return str;
+  return new Intl.DateTimeFormat("ar", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(date);
+}
+
 export async function getSettings<K extends keyof SiteSettings>(key: K): Promise<SiteSettings[K]> {
   const fallback = DEFAULT_SETTINGS[key];
   const db = getDb();
