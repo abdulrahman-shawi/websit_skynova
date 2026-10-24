@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import type { EntityDef } from "@/lib/admin-config";
 import { useLanguage } from "./LanguageProvider";
+import ImageField from "./ImageField";
 
 type Item = Record<string, unknown> & { id: number };
 
@@ -149,7 +150,11 @@ export default function EntityManager({ def }: { def: EntityDef }) {
             {def.fields.map((field) => (
               <div
                 key={field.name}
-                className={field.type === "textarea" ? "sm:col-span-2" : ""}
+                className={
+                  field.type === "textarea" || field.type === "image"
+                    ? "sm:col-span-2"
+                    : ""
+                }
               >
                 {field.type === "checkbox" ? (
                   <label className="flex cursor-pointer items-center gap-3 rounded-2xl border border-blush-200 bg-background px-4 py-3">
@@ -161,6 +166,17 @@ export default function EntityManager({ def }: { def: EntityDef }) {
                     />
                     <span className="text-sm font-bold">{field.label[lang]}</span>
                   </label>
+                ) : field.type === "image" ? (
+                  <>
+                    <label className="mb-1.5 block text-sm font-bold">
+                      {field.label[lang]}
+                    </label>
+                    <ImageField
+                      value={String(form[field.name] ?? "")}
+                      folder={def.key}
+                      onChange={(url) => setForm({ ...form, [field.name]: url })}
+                    />
+                  </>
                 ) : (
                   <>
                     <label className="mb-1.5 block text-sm font-bold">
@@ -253,6 +269,14 @@ export default function EntityManager({ def }: { def: EntityDef }) {
                     </p>
                   ) : null}
                 </div>
+                {typeof item.image === "string" && item.image !== "" && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={item.image}
+                    alt=""
+                    className="hidden h-10 w-16 shrink-0 rounded-xl border border-blush-100 object-cover sm:block"
+                  />
+                )}
                 {item.featured === true && (
                   <span className="hidden shrink-0 rounded-full bg-gold-300/40 px-3 py-1 text-xs font-bold text-gold-600 sm:inline">
                     ★ {t("entity.featured")}

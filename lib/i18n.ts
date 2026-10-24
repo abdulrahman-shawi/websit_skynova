@@ -52,6 +52,12 @@ const dict = {
     "entity.moveDown": "تحريك لأسفل",
     "entity.featured": "يظهر في الرئيسية",
 
+    "image.choose": "اختر صورة",
+    "image.uploading": "جارٍ رفع الصورة...",
+    "image.uploadFailed": "فشل رفع الصورة — حاول مجدداً",
+    "image.remove": "إزالة الصورة",
+    "image.hint": "PNG أو JPG أو WebP — بحد أقصى 5MB",
+
     "settings.saved": "تم حفظ الإعدادات بنجاح",
     "settings.save": "حفظ التغييرات",
     "settings.saving": "جارٍ الحفظ...",
@@ -108,6 +114,12 @@ const dict = {
     "entity.moveUp": "Move up",
     "entity.moveDown": "Move down",
     "entity.featured": "Shown on homepage",
+
+    "image.choose": "Choose image",
+    "image.uploading": "Uploading image...",
+    "image.uploadFailed": "Image upload failed — try again",
+    "image.remove": "Remove image",
+    "image.hint": "PNG, JPG or WebP — up to 5MB",
 
     "settings.saved": "Settings saved successfully",
     "settings.save": "Save changes",

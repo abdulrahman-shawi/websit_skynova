@@ -28,6 +28,7 @@ export type EventItem = {
   location: string;
   date: string;
   description: string;
+  image?: string;
 };
 
 export type StatItem = { value: string; label: string };

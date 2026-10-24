@@ -53,6 +53,7 @@ model Event {
   location     String @default("")
   dateLabel    String @default("") @map("date_label")
   description  String @default("")
+  image        String @default("")
   displayOrder Int    @default(0) @map("display_order")
 
   @@map("events")

@@ -91,6 +91,7 @@ export async function getEvents(): Promise<EventItem[]> {
       location: row.location,
       date: row.dateLabel,
       description: row.description,
+      image: row.image || undefined,
     }));
   } catch {
     return DEFAULT_EVENTS;

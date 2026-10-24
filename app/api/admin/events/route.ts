@@ -43,6 +43,7 @@ export async function POST(req: NextRequest) {
         location: asString(body?.location),
         dateLabel: asString(body?.date),
         description: asString(body?.description),
+        image: asString(body?.image),
         displayOrder: (max._max.displayOrder ?? 0) + 1,
       },
     });

@@ -47,13 +47,30 @@ export default async function Gallery() {
             key={event.title}
             className="overflow-hidden rounded-3xl border border-blush-100 bg-white shadow-sm transition-shadow hover:shadow-soft"
           >
-            <div className="flex h-44 items-center justify-center bg-gradient-to-br from-ink via-blush-700 to-blush-500 text-center text-white">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-widest text-gold-300">
-                  {event.type}
-                </p>
-                <p className="mt-2 px-4 text-xl font-extrabold">{event.title}</p>
-              </div>
+            <div className="relative flex h-44 items-center justify-center overflow-hidden bg-gradient-to-br from-ink via-blush-700 to-blush-500 text-center text-white">
+              {event.image ? (
+                <>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={event.image}
+                    alt={event.title}
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/80 to-transparent p-4 pt-10 text-right">
+                    <p className="text-xs font-bold uppercase tracking-widest text-gold-300">
+                      {event.type}
+                    </p>
+                    <p className="mt-1 text-lg font-extrabold">{event.title}</p>
+                  </div>
+                </>
+              ) : (
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-widest text-gold-300">
+                    {event.type}
+                  </p>
+                  <p className="mt-2 px-4 text-xl font-extrabold">{event.title}</p>
+                </div>
+              )}
             </div>
             <div className="p-6">
               <div className="flex items-center gap-4 text-xs font-bold text-ink/50">
