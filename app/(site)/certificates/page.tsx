@@ -38,8 +38,17 @@ export default async function Certificates() {
             key={cert.name}
             className="flex gap-6 rounded-3xl border border-blush-100 bg-white p-7 shadow-sm transition-shadow hover:shadow-soft"
           >
-            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-blush-500 to-gold-500 text-xl font-black text-white">
-              {certShortName(cert.name)}
+            <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-blush-500 to-gold-500 text-xl font-black text-white">
+              {cert.image ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={cert.image}
+                  alt={cert.name}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                certShortName(cert.name)
+              )}
             </div>
             <div>
               <div className="flex flex-wrap items-center gap-3">

@@ -70,6 +70,7 @@ export async function getCertificates(): Promise<Certificate[]> {
       description: row.description,
       scope: row.scope,
       year: row.year,
+      image: row.image || undefined,
     }));
   } catch {
     return DEFAULT_CERTIFICATES;

@@ -19,6 +19,7 @@ export type Certificate = {
   description: string;
   scope: string;
   year: string;
+  image?: string;
 };
 
 export type EventItem = {

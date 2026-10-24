@@ -33,6 +33,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
         description: asString(body?.description),
         scope: asString(body?.scope),
         year: asString(body?.year),
+        image: asString(body?.image),
       },
     });
     REVALIDATE_PATHS.forEach((path) => revalidatePath(path));

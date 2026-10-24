@@ -43,6 +43,7 @@ export async function POST(req: NextRequest) {
         description: asString(body?.description),
         scope: asString(body?.scope),
         year: asString(body?.year),
+        image: asString(body?.image),
         displayOrder: (max._max.displayOrder ?? 0) + 1,
       },
     });

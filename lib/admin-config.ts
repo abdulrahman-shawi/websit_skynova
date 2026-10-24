@@ -59,6 +59,7 @@ export const ENTITY_DEFS: Record<EntityKey, EntityDef> = {
       { name: "issuer", type: "text", label: { ar: "الجهة المانحة", en: "Issuer" } },
       { name: "year", type: "text", label: { ar: "سنة الاعتماد", en: "Year" } },
       { name: "scope", type: "text", label: { ar: "النطاق", en: "Scope" } },
+      { name: "image", type: "image", label: { ar: "شعار الشهادة / صورة الاعتماد", en: "Certificate logo / image" } },
       { name: "description", type: "textarea", label: { ar: "الوصف", en: "Description" } },
     ],
   },
