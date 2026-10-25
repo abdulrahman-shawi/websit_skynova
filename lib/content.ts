@@ -31,6 +31,8 @@ export async function getProducts(featuredOnly = false): Promise<Product[]> {
       guarantee: row.guarantee,
       featured: row.featured,
       image: row.image || undefined,
+      barcode: row.barcode || undefined,
+      usage: row.usage || undefined,
     }));
   } catch {
     return featuredOnly ? DEFAULT_PRODUCTS.filter((p) => p.featured) : DEFAULT_PRODUCTS;

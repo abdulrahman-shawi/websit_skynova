@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { getContact, getProducts } from "@/lib/content";
 
 export const metadata: Metadata = {
@@ -71,14 +72,24 @@ export default async function Products() {
               )}
               <div className="mt-5 flex items-center justify-between border-t border-blush-100 pt-5">
                 <span className="text-lg font-black text-blush-600">{product.price}</span>
-                <a
-                  href={whatsappLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rounded-full bg-blush-500 px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-blush-600"
-                >
-                  اطلب الآن
-                </a>
+                <div className="flex items-center gap-2">
+                  {product.barcode && (
+                    <Link
+                      href={`/p/${encodeURIComponent(product.barcode)}`}
+                      className="rounded-full border-2 border-blush-500 px-4 py-2 text-xs font-bold text-blush-600 transition-colors hover:bg-blush-500 hover:text-white"
+                    >
+                      التفاصيل
+                    </Link>
+                  )}
+                  <a
+                    href={whatsappLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="rounded-full bg-blush-500 px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-blush-600"
+                  >
+                    اطلب الآن
+                  </a>
+                </div>
               </div>
             </div>
           </article>

@@ -8,6 +8,8 @@ export type Product = {
   guarantee: string | null;
   featured: boolean;
   image?: string;
+  barcode?: string;
+  usage?: string;
 };
 
 export type Faq = { id?: number; question: string; answer: string };

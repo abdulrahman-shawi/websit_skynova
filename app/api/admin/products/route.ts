@@ -40,11 +40,13 @@ export async function POST(req: NextRequest) {
     const item = await db.product.create({
       data: {
         name,
+        barcode: asString(body?.barcode),
         category: asString(body?.category),
         badge: asString(body?.badge),
         description: asString(body?.description),
         price: asString(body?.price),
         image: asString(body?.image),
+        usage: asString(body?.usage),
         guarantee: asNullableString(body?.guarantee),
         featured: asBoolean(body?.featured),
         displayOrder: (max._max.displayOrder ?? 0) + 1,
