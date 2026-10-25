@@ -2,21 +2,35 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "سكاينوفا — مصنع أجهزة التجميل",
+    id: "/",
+    name: "سكاينوفا — تحقق من منتجك",
     short_name: "سكاينوفا",
     description:
-      "مصنع متخصص في تصنيع أجهزة التجميل والعناية بالبشرة بأعلى معايير الجودة العالمية.",
+      "تحقق من أصالة أجهزة سكاينوفا واقرأ بيانات المنتج وطريقة الاستخدام عبر مسح الباركود.",
     lang: "ar",
     dir: "rtl",
-    start_url: "/",
+    start_url: "/check",
+    scope: "/",
     display: "standalone",
+    orientation: "portrait",
     background_color: "#fdfcfb",
     theme_color: "#d63a67",
     icons: [
       {
-        src: "/icon.svg",
-        sizes: "any",
-        type: "image/svg+xml",
+        src: "/icons/icon-192.png",
+        sizes: "192x192",
+        type: "image/png",
+      },
+      {
+        src: "/icons/icon-512.png",
+        sizes: "512x512",
+        type: "image/png",
+      },
+      {
+        src: "/icons/icon-512.png",
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "maskable",
       },
     ],
   };

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 
 const SITE_URL = "https://skynova-beauty.com";
 const SITE_NAME = "سكاينوفا | SKYNOVA";
@@ -24,6 +25,15 @@ export const metadata: Metadata = {
     "أجهزة شد البشرة",
   ],
   applicationName: SITE_NAME,
+  appleWebApp: {
+    capable: true,
+    title: "سكاينوفا",
+    statusBarStyle: "default",
+  },
+  icons: {
+    icon: "/icons/icon-192.png",
+    apple: "/apple-touch-icon.png",
+  },
   authors: [{ name: "Skynova Beauty Devices" }],
   creator: "Skynova Beauty Devices",
   publisher: "Skynova Beauty Devices",
@@ -111,7 +121,10 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        {children}
+        <ServiceWorkerRegister />
+      </body>
     </html>
   );
 }

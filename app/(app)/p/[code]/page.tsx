@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getContact } from "@/lib/content";
 import { getDb } from "@/lib/db";
+import SaveDeviceButton from "@/components/customer/SaveDeviceButton";
 
 export const metadata: Metadata = {
   title: "بيانات المنتج | سكاينوفا",
@@ -143,6 +144,8 @@ export default async function ProductInfoPage({
           >
             اطلب الآن عبر الواتساب
           </a>
+
+          <SaveDeviceButton barcode={product.barcode} />
         </div>
       </div>
 
