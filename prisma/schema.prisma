@@ -15,6 +15,7 @@ model Product {
   description  String   @default("")
   price        String   @default("")
   guarantee    String?
+  image        String   @default("")
   featured     Boolean  @default(false)
   isActive     Boolean  @default(true) @map("is_active")
   displayOrder Int      @default(0) @map("display_order")

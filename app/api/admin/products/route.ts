@@ -44,6 +44,7 @@ export async function POST(req: NextRequest) {
         badge: asString(body?.badge),
         description: asString(body?.description),
         price: asString(body?.price),
+        image: asString(body?.image),
         guarantee: asNullableString(body?.guarantee),
         featured: asBoolean(body?.featured),
         displayOrder: (max._max.displayOrder ?? 0) + 1,

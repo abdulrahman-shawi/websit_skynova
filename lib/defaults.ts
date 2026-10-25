@@ -7,6 +7,7 @@ export type Product = {
   price: string;
   guarantee: string | null;
   featured: boolean;
+  image?: string;
 };
 
 export type Faq = { id?: number; question: string; answer: string };

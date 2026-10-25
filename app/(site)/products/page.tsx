@@ -34,17 +34,26 @@ export default async function Products() {
             key={product.name}
             className="group overflow-hidden rounded-3xl border border-blush-100 bg-white shadow-sm transition-shadow hover:shadow-soft"
           >
-            <div className="relative flex h-52 items-center justify-center bg-gradient-to-br from-blush-100 via-blush-50 to-gold-300/40">
-              <svg
-                className="h-20 w-20 text-blush-400 transition-transform group-hover:scale-110"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-              >
-                <rect x="4" y="7" width="16" height="12" rx="3" />
-                <path d="M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2M8 13h8" />
-              </svg>
+            <div className="relative flex h-52 items-center justify-center overflow-hidden bg-gradient-to-br from-blush-100 via-blush-50 to-gold-300/40">
+              {product.image ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+              ) : (
+                <svg
+                  className="h-20 w-20 text-blush-400 transition-transform group-hover:scale-110"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                >
+                  <rect x="4" y="7" width="16" height="12" rx="3" />
+                  <path d="M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2M8 13h8" />
+                </svg>
+              )}
               <span className="absolute right-4 top-4 rounded-full bg-ink px-3 py-1.5 text-xs font-bold text-white">
                 {product.badge}
               </span>

@@ -30,6 +30,7 @@ export async function getProducts(featuredOnly = false): Promise<Product[]> {
       price: row.price,
       guarantee: row.guarantee,
       featured: row.featured,
+      image: row.image || undefined,
     }));
   } catch {
     return featuredOnly ? DEFAULT_PRODUCTS.filter((p) => p.featured) : DEFAULT_PRODUCTS;

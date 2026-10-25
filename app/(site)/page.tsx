@@ -187,8 +187,17 @@ export default async function Home() {
                 key={product.name}
                 className="group overflow-hidden rounded-3xl border border-blush-100 bg-background shadow-sm transition-shadow hover:shadow-soft"
               >
-                <div className="relative flex h-52 items-center justify-center bg-gradient-to-br from-blush-100 via-blush-50 to-gold-300/40">
-                  {productIcon}
+                <div className="relative flex h-52 items-center justify-center overflow-hidden bg-gradient-to-br from-blush-100 via-blush-50 to-gold-300/40">
+                  {product.image ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="absolute inset-0 h-full w-full object-cover"
+                    />
+                  ) : (
+                    productIcon
+                  )}
                   <span className="absolute right-4 top-4 rounded-full bg-ink px-3 py-1.5 text-xs font-bold text-white">
                     {product.badge}
                   </span>

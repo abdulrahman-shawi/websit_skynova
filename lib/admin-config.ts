@@ -32,6 +32,7 @@ export const ENTITY_DEFS: Record<EntityKey, EntityDef> = {
       { name: "category", type: "text", label: { ar: "الفئة", en: "Category" } },
       { name: "badge", type: "text", label: { ar: "الشارة (الأحدث/الأكثر مبيعاً...)", en: "Badge" } },
       { name: "price", type: "text", label: { ar: "السعر", en: "Price" } },
+      { name: "image", type: "image", label: { ar: "صورة المنتج", en: "Product image" } },
       { name: "guarantee", type: "text", label: { ar: "الضمان (اتركه فارغاً بدون ضمان)", en: "Warranty (empty = none)" } },
       { name: "description", type: "textarea", label: { ar: "الوصف", en: "Description" } },
       { name: "featured", type: "checkbox", label: { ar: "يظهر في الصفحة الرئيسية", en: "Show on homepage" } },
