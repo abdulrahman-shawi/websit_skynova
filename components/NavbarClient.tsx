@@ -7,6 +7,7 @@ import { useState } from "react";
 const links = [
   { href: "/", label: "الرئيسية" },
   { href: "/products", label: "منتجاتنا" },
+  { href: "/check", label: "تحقق من منتجك" },
   { href: "/about", label: "من نحن" },
   { href: "/gallery", label: "المؤتمرات واللقاءات" },
   { href: "/certificates", label: "الشهادات" },

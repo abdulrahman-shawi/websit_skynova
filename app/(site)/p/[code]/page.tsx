@@ -38,19 +38,17 @@ export default async function ProductInfoPage({
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Link
-              href="/products"
+              href="/check"
               className="rounded-full bg-blush-500 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-blush-600"
+            >
+              امسح الباركود مجدداً
+            </Link>
+            <Link
+              href="/products"
+              className="rounded-full border-2 border-blush-500 px-6 py-3 text-sm font-bold text-blush-600 transition-colors hover:bg-blush-500 hover:text-white"
             >
               تصفح الأجهزة
             </Link>
-            <a
-              href={`https://wa.me/${contact.whatsapp}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-full border-2 border-blush-500 px-6 py-3 text-sm font-bold text-blush-600 transition-colors hover:bg-blush-500 hover:text-white"
-            >
-              تواصل معنا
-            </a>
           </div>
         </div>
       </div>
