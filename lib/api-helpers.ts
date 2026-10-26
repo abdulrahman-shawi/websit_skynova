@@ -30,3 +30,17 @@ export function asNullableString(value: unknown): string | null {
 export function asBoolean(value: unknown): boolean {
   return value === true;
 }
+
+export function asCodes(value: unknown): string[] {
+  const list = Array.isArray(value)
+    ? value
+    : typeof value === "string"
+      ? value.split(/\r?\n/)
+      : [];
+  const out: string[] = [];
+  for (const item of list) {
+    const str = typeof item === "string" ? item.trim() : "";
+    if (str && !out.includes(str)) out.push(str);
+  }
+  return out;
+}

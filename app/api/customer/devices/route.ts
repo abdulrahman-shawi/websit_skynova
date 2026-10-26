@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { findProductsByCodes, findProductByCode } from "@/lib/barcode";
 import { getDb } from "@/lib/db";
 import { verifyCustomerSessionValue, CUSTOMER_COOKIE } from "@/lib/customer-auth";
 
@@ -22,10 +23,7 @@ export async function GET(req: NextRequest) {
       orderBy: { createdAt: "desc" },
     });
     const barcodes = rows.map((row) => row.barcode).filter(Boolean);
-    const products = barcodes.length
-      ? await db.product.findMany({ where: { barcode: { in: barcodes } } })
-      : [];
-    const byBarcode = new Map(products.map((p) => [p.barcode, p]));
+    const byBarcode = await findProductsByCodes(db, barcodes);
     const items = rows.map((row) => {
       const product = byBarcode.get(row.barcode);
       return {
@@ -62,9 +60,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "barcode is required" }, { status: 400 });
     }
 
-    const product = await db.product.findFirst({
-      where: { barcode, isActive: true },
-    });
+    const found = await findProductByCode(db, barcode);
+    const product = found?.product ?? null;
 
     const count = await db.customerDevice.count({ where: { customerId } });
     if (count >= 50) {

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { findProductByCode } from "@/lib/barcode";
 import { getContact } from "@/lib/content";
 import { getDb } from "@/lib/db";
 import SaveDeviceButton from "@/components/customer/SaveDeviceButton";
@@ -20,12 +21,11 @@ export default async function ProductInfoPage({
   const code = decodeURIComponent(params.code).trim();
   const db = getDb();
 
-  const [product, contact] = await Promise.all([
-    db
-      ? db.product.findFirst({ where: { barcode: code, isActive: true } })
-      : null,
+  const [found, contact] = await Promise.all([
+    db ? findProductByCode(db, code) : null,
     getContact(),
   ]);
+  const product = found?.product ?? null;
 
   if (!product) {
     return (
@@ -118,9 +118,11 @@ export default async function ProductInfoPage({
 
           <div className="mt-6 flex items-center justify-between rounded-2xl border border-dashed border-blush-300 bg-background px-5 py-4">
             <div>
-              <p className="text-xs font-bold text-ink/50">رقم الباركود</p>
+              <p className="text-xs font-bold text-ink/50">
+                رقم هذه العبوة (فريد لكل عبوة)
+              </p>
               <p className="mt-1 text-lg font-black tracking-widest" dir="ltr">
-                {product.barcode}
+                {code}
               </p>
             </div>
             <svg
@@ -136,7 +138,7 @@ export default async function ProductInfoPage({
 
           <a
             href={`https://wa.me/${contact.whatsapp}?text=${encodeURIComponent(
-              `أريد طلب: ${product.name} — باركود: ${product.barcode}`
+              `أريد طلب: ${product.name} — رقم العبوة: ${code}`
             )}`}
             target="_blank"
             rel="noopener noreferrer"
@@ -145,7 +147,7 @@ export default async function ProductInfoPage({
             اطلب الآن عبر الواتساب
           </a>
 
-          <SaveDeviceButton barcode={product.barcode} />
+          <SaveDeviceButton barcode={code} />
         </div>
       </div>
 

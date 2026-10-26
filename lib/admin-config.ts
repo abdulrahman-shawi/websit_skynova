@@ -4,7 +4,7 @@ type L = { ar: string; en: string };
 
 export type FieldDef = {
   name: string;
-  type: "text" | "textarea" | "checkbox" | "image" | "date";
+  type: "text" | "textarea" | "checkbox" | "image" | "date" | "codes";
   label: L;
   required?: boolean;
 };
@@ -29,7 +29,14 @@ export const ENTITY_DEFS: Record<EntityKey, EntityDef> = {
     secondaryField: "category",
     fields: [
       { name: "name", type: "text", label: { ar: "اسم الجهاز", en: "Device name" }, required: true },
-      { name: "barcode", type: "text", label: { ar: "الباركود", en: "Barcode" } },
+      {
+        name: "codes",
+        type: "codes",
+        label: {
+          ar: "أرقام العبوات — رقم فريد لكل عبوة (رقم في كل سطر)",
+          en: "Package numbers — unique per package (one per line)",
+        },
+      },
       { name: "category", type: "text", label: { ar: "الفئة", en: "Category" } },
       { name: "badge", type: "text", label: { ar: "الشارة (الأحدث/الأكثر مبيعاً...)", en: "Badge" } },
       { name: "price", type: "text", label: { ar: "السعر", en: "Price" } },

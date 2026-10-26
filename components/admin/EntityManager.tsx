@@ -25,7 +25,8 @@ export default function EntityManager({ def }: { def: EntityDef }) {
   const [form, setForm] = useState<Record<string, unknown> | null>(null);
   const [editId, setEditId] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
-  const [notice, setNotice] = useState<"saved" | "error" | null>(null);
+  const [notice, setNotice] = useState<"saved" | "error" | "duplicateCode" | null>(null);
+  const [duplicateCode, setDuplicateCode] = useState("");
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -46,10 +47,16 @@ export default function EntityManager({ def }: { def: EntityDef }) {
     load();
   }, [load]);
 
+  const emptyValue = (field: (typeof def.fields)[number]) => {
+    if (field.type === "checkbox") return false;
+    if (field.type === "codes") return [];
+    return "";
+  };
+
   const openNew = () => {
     const empty: Record<string, unknown> = {};
     for (const field of def.fields) {
-      empty[field.name] = field.type === "checkbox" ? false : "";
+      empty[field.name] = emptyValue(field);
     }
     setForm(empty);
     setEditId(null);
@@ -59,7 +66,7 @@ export default function EntityManager({ def }: { def: EntityDef }) {
   const openEdit = (item: Item) => {
     const values: Record<string, unknown> = {};
     for (const field of def.fields) {
-      values[field.name] = item[field.name] ?? (field.type === "checkbox" ? false : "");
+      values[field.name] = item[field.name] ?? emptyValue(field);
     }
     setForm(values);
     setEditId(item.id);
@@ -81,6 +88,19 @@ export default function EntityManager({ def }: { def: EntityDef }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
+      if (res.status === 409) {
+        const data = (await res.json().catch(() => null)) as {
+          error?: string;
+          code?: string;
+        } | null;
+        if (data?.error === "duplicate_code") {
+          setDuplicateCode(data.code ?? "");
+          setNotice("duplicateCode");
+          setSaving(false);
+          return;
+        }
+        throw new Error();
+      }
       if (!res.ok) throw new Error();
       setNotice("saved");
       closeForm();
@@ -142,6 +162,14 @@ export default function EntityManager({ def }: { def: EntityDef }) {
           ✓ {t("entity.saved")}
         </p>
       )}
+      {notice === "duplicateCode" && (
+        <p className="mt-4 rounded-2xl bg-gold-300/20 px-4 py-3 text-sm font-bold text-gold-600">
+          {t("entity.duplicateCode")}{" "}
+          <span dir="ltr" className="font-black">
+            {duplicateCode}
+          </span>
+        </p>
+      )}
       {notice === "error" && (
         <p className="mt-4 rounded-2xl bg-red-50 px-4 py-3 text-sm font-bold text-red-600">
           {t("entity.loadError")}
@@ -158,7 +186,9 @@ export default function EntityManager({ def }: { def: EntityDef }) {
               <div
                 key={field.name}
                 className={
-                  field.type === "textarea" || field.type === "image"
+                  field.type === "textarea" ||
+                  field.type === "image" ||
+                  field.type === "codes"
                     ? "sm:col-span-2"
                     : ""
                 }
@@ -183,6 +213,38 @@ export default function EntityManager({ def }: { def: EntityDef }) {
                       folder={def.key}
                       onChange={(url) => setForm({ ...form, [field.name]: url })}
                     />
+                  </>
+                ) : field.type === "codes" ? (
+                  <>
+                    <label className="mb-1.5 block text-sm font-bold">
+                      {field.label[lang]}
+                    </label>
+                    <textarea
+                      rows={5}
+                      dir="ltr"
+                      value={
+                        Array.isArray(form[field.name])
+                          ? (form[field.name] as string[]).join("\n")
+                          : ""
+                      }
+                      onChange={(e) =>
+                        setForm({
+                          ...form,
+                          [field.name]: e.target.value
+                            .split(/\r?\n/)
+                            .map((line) => line.trim())
+                            .filter(Boolean),
+                        })
+                      }
+                      placeholder={"6291000000001\n6291000000002\n6291000000003"}
+                      className={`${inputClass} resize-none text-left`}
+                    />
+                    <p className="mt-1.5 text-xs text-ink/50">
+                      {t("entity.codesCount")}:{" "}
+                      {Array.isArray(form[field.name])
+                        ? (form[field.name] as string[]).length
+                        : 0}
+                    </p>
                   </>
                 ) : (
                   <>

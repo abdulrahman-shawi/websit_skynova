@@ -9,6 +9,7 @@ const dict = {
     "admin.certificates": "الشهادات",
     "admin.events": "المؤتمرات والفعاليات",
     "admin.settings": "الإعدادات",
+    "admin.requests": "طلبات المتابعة",
     "admin.viewSite": "عرض الموقع",
     "admin.logout": "تسجيل الخروج",
     "admin.language": "اللغة",
@@ -51,6 +52,8 @@ const dict = {
     "entity.moveUp": "تحريك لأعلى",
     "entity.moveDown": "تحريك لأسفل",
     "entity.featured": "يظهر في الرئيسية",
+    "entity.codesCount": "عدد الأرقام المسجلة",
+    "entity.duplicateCode": "هذا الرقم مسجل لمنتج آخر — كل عبوة يجب أن يكون لها رقم خاص:",
 
     "image.choose": "اختر صورة",
     "image.uploading": "جارٍ رفع الصورة...",
@@ -72,6 +75,7 @@ const dict = {
     "admin.certificates": "Certificates",
     "admin.events": "Conferences & Events",
     "admin.settings": "Settings",
+    "admin.requests": "Follow-up requests",
     "admin.viewSite": "View site",
     "admin.logout": "Sign out",
     "admin.language": "Language",
@@ -114,6 +118,8 @@ const dict = {
     "entity.moveUp": "Move up",
     "entity.moveDown": "Move down",
     "entity.featured": "Shown on homepage",
+    "entity.codesCount": "Registered numbers",
+    "entity.duplicateCode": "This number is already assigned to another product — each package needs its own unique number:",
 
     "image.choose": "Choose image",
     "image.uploading": "Uploading image...",

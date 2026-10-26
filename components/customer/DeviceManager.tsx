@@ -165,9 +165,12 @@ export default function DeviceManager() {
                 <div className="min-w-0 flex-1">
                   {item.product ? (
                     <>
-                      <p className="truncate text-sm font-extrabold">
+                      <Link
+                        href={`/dashboard/device/${item.id}`}
+                        className="block truncate text-sm font-extrabold transition-colors hover:text-blush-600"
+                      >
                         {item.product.name}
-                      </p>
+                      </Link>
                       <p className="mt-0.5 text-xs text-ink/50" dir="ltr">
                         {item.barcode}
                       </p>
@@ -186,9 +189,12 @@ export default function DeviceManager() {
                     </>
                   ) : (
                     <>
-                      <p className="text-sm font-extrabold text-ink/60">
+                      <Link
+                        href={`/dashboard/device/${item.id}`}
+                        className="block text-sm font-extrabold text-ink/60 transition-colors hover:text-blush-600"
+                      >
                         جهاز غير مسجل لدينا
-                      </p>
+                      </Link>
                       <p className="mt-0.5 text-xs text-ink/50" dir="ltr">
                         {item.barcode}
                       </p>
@@ -200,7 +206,7 @@ export default function DeviceManager() {
                     href={`/p/${encodeURIComponent(item.barcode)}`}
                     className="rounded-full border-2 border-blush-500 px-4 py-1.5 text-center text-xs font-bold text-blush-600 transition-colors hover:bg-blush-500 hover:text-white"
                   >
-                    العرض
+                    المنتج
                   </Link>
                   <button
                     type="button"

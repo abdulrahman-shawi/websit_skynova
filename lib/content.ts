@@ -19,6 +19,7 @@ export async function getProducts(featuredOnly = false): Promise<Product[]> {
     const rows = await db.product.findMany({
       where: { isActive: true, ...(featuredOnly ? { featured: true } : {}) },
       orderBy: [{ displayOrder: "asc" }, { id: "asc" }],
+      include: { units: { orderBy: { id: "asc" }, take: 1 } },
     });
     if (!rows.length) return featuredOnly ? DEFAULT_PRODUCTS.filter((p) => p.featured) : DEFAULT_PRODUCTS;
     return rows.map((row) => ({
@@ -31,7 +32,7 @@ export async function getProducts(featuredOnly = false): Promise<Product[]> {
       guarantee: row.guarantee,
       featured: row.featured,
       image: row.image || undefined,
-      barcode: row.barcode || undefined,
+      barcode: row.units[0]?.code || row.barcode || undefined,
       usage: row.usage || undefined,
     }));
   } catch {

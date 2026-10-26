@@ -1,0 +1,66 @@
+import { NextRequest, NextResponse } from "next/server";
+import { getDb } from "@/lib/db";
+import { findOwnedDevice } from "@/lib/customer-device";
+import { CUSTOMER_COOKIE } from "@/lib/customer-auth";
+
+type Params = { params: { id: string } };
+
+function deviceIdFrom(params: { id: string }): number | null {
+  const id = Number(params.id);
+  return Number.isInteger(id) && id > 0 ? id : null;
+}
+
+export async function GET(req: NextRequest, { params }: Params) {
+  const deviceId = deviceIdFrom(params);
+  if (!deviceId) {
+    return NextResponse.json({ error: "invalid id" }, { status: 400 });
+  }
+  const device = await findOwnedDevice(
+    deviceId,
+    req.cookies.get(CUSTOMER_COOKIE)?.value
+  );
+  if (!device) {
+    return NextResponse.json({ error: "not found" }, { status: 404 });
+  }
+  const db = getDb();
+  if (!db) return NextResponse.json({ error: "server error" }, { status: 500 });
+  try {
+    const items = await db.deviceNote.findMany({
+      where: { deviceId },
+      orderBy: { createdAt: "desc" },
+    });
+    return NextResponse.json({ items });
+  } catch {
+    return NextResponse.json({ error: "server error" }, { status: 500 });
+  }
+}
+
+export async function POST(req: NextRequest, { params }: Params) {
+  const deviceId = deviceIdFrom(params);
+  if (!deviceId) {
+    return NextResponse.json({ error: "invalid id" }, { status: 400 });
+  }
+  const device = await findOwnedDevice(
+    deviceId,
+    req.cookies.get(CUSTOMER_COOKIE)?.value
+  );
+  if (!device) {
+    return NextResponse.json({ error: "not found" }, { status: 404 });
+  }
+  const db = getDb();
+  if (!db) return NextResponse.json({ error: "server error" }, { status: 500 });
+  try {
+    const body = await req.json();
+    const text = typeof body?.text === "string" ? body.text.trim() : "";
+    if (!text) {
+      return NextResponse.json({ error: "text is required" }, { status: 400 });
+    }
+    if (text.length > 2000) {
+      return NextResponse.json({ error: "too long" }, { status: 400 });
+    }
+    const item = await db.deviceNote.create({ data: { deviceId, text } });
+    return NextResponse.json({ ok: true, id: item.id });
+  } catch {
+    return NextResponse.json({ error: "server error" }, { status: 500 });
+  }
+}

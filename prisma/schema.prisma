@@ -24,7 +24,20 @@ model Product {
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
+  units ProductUnit[]
+
   @@map("products")
+}
+
+model ProductUnit {
+  id        Int      @id @default(autoincrement())
+  productId Int      @map("product_id")
+  code      String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("product_units")
 }
 
 model Faq {
@@ -90,7 +103,34 @@ model CustomerDevice {
   productId  Int?     @map("product_id")
   createdAt  DateTime @default(now()) @map("created_at")
 
-  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customer Customer        @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  requests DeviceRequest[]
+  notes    DeviceNote[]
 
   @@map("customer_devices")
+}
+
+model DeviceRequest {
+  id        Int      @id @default(autoincrement())
+  deviceId  Int      @map("device_id")
+  kind      String   @default("followup")
+  message   String   @default("")
+  status    String   @default("new")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  device CustomerDevice @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+
+  @@map("device_requests")
+}
+
+model DeviceNote {
+  id        Int      @id @default(autoincrement())
+  deviceId  Int      @map("device_id")
+  text      String   @default("")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  device CustomerDevice @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+
+  @@map("device_notes")
 }
