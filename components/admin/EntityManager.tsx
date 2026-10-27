@@ -12,6 +12,13 @@ const inputClass =
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
+function parseCodes(value: unknown): string[] {
+  return String(value ?? "")
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
+
 function toDateInputValue(value: unknown): string {
   const str = typeof value === "string" ? value.trim() : "";
   return ISO_DATE.test(str) ? str : "";
@@ -49,7 +56,6 @@ export default function EntityManager({ def }: { def: EntityDef }) {
 
   const emptyValue = (field: (typeof def.fields)[number]) => {
     if (field.type === "checkbox") return false;
-    if (field.type === "codes") return [];
     return "";
   };
 
@@ -66,7 +72,11 @@ export default function EntityManager({ def }: { def: EntityDef }) {
   const openEdit = (item: Item) => {
     const values: Record<string, unknown> = {};
     for (const field of def.fields) {
-      values[field.name] = item[field.name] ?? emptyValue(field);
+      const value = item[field.name] ?? emptyValue(field);
+      values[field.name] =
+        field.type === "codes" && Array.isArray(value)
+          ? (value as string[]).join("\n")
+          : value;
     }
     setForm(values);
     setEditId(item.id);
@@ -83,10 +93,14 @@ export default function EntityManager({ def }: { def: EntityDef }) {
     setSaving(true);
     setNotice(null);
     try {
+      const payload: Record<string, unknown> = { ...form };
+      for (const field of def.fields) {
+        if (field.type === "codes") payload[field.name] = parseCodes(payload[field.name]);
+      }
       const res = await fetch(editId === null ? def.api : `${def.api}/${editId}`, {
         method: editId === null ? "POST" : "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       });
       if (res.status === 409) {
         const data = (await res.json().catch(() => null)) as {
@@ -222,28 +236,13 @@ export default function EntityManager({ def }: { def: EntityDef }) {
                     <textarea
                       rows={5}
                       dir="ltr"
-                      value={
-                        Array.isArray(form[field.name])
-                          ? (form[field.name] as string[]).join("\n")
-                          : ""
-                      }
-                      onChange={(e) =>
-                        setForm({
-                          ...form,
-                          [field.name]: e.target.value
-                            .split(/\r?\n/)
-                            .map((line) => line.trim())
-                            .filter(Boolean),
-                        })
-                      }
+                      value={String(form[field.name] ?? "")}
+                      onChange={(e) => setForm({ ...form, [field.name]: e.target.value })}
                       placeholder={"6291000000001\n6291000000002\n6291000000003"}
                       className={`${inputClass} resize-none text-left`}
                     />
                     <p className="mt-1.5 text-xs text-ink/50">
-                      {t("entity.codesCount")}:{" "}
-                      {Array.isArray(form[field.name])
-                        ? (form[field.name] as string[]).length
-                        : 0}
+                      {t("entity.codesCount")}: {parseCodes(form[field.name]).length}
                     </p>
                   </>
                 ) : (
