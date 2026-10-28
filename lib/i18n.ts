@@ -53,6 +53,7 @@ const dict = {
     "entity.moveDown": "تحريك لأسفل",
     "entity.featured": "يظهر في الرئيسية",
     "entity.codesCount": "عدد الأرقام المسجلة",
+    "entity.addCode": "إضافة رقم",
     "entity.duplicateCode": "هذا الرقم مسجل لمنتج آخر — كل عبوة يجب أن يكون لها رقم خاص:",
 
     "image.choose": "اختر صورة",
@@ -119,6 +120,7 @@ const dict = {
     "entity.moveDown": "Move down",
     "entity.featured": "Shown on homepage",
     "entity.codesCount": "Registered numbers",
+    "entity.addCode": "Add number",
     "entity.duplicateCode": "This number is already assigned to another product — each package needs its own unique number:",
 
     "image.choose": "Choose image",

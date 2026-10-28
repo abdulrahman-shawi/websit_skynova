@@ -19,6 +19,17 @@ function parseCodes(value: unknown): string[] {
     .filter(Boolean);
 }
 
+function codesValue(value: unknown): string[] {
+  if (Array.isArray(value)) return value.map((code) => String(code));
+  return parseCodes(value);
+}
+
+function cleanCodes(value: unknown): string[] {
+  return codesValue(value)
+    .map((code) => code.trim())
+    .filter(Boolean);
+}
+
 function toDateInputValue(value: unknown): string {
   const str = typeof value === "string" ? value.trim() : "";
   return ISO_DATE.test(str) ? str : "";
@@ -56,6 +67,7 @@ export default function EntityManager({ def }: { def: EntityDef }) {
 
   const emptyValue = (field: (typeof def.fields)[number]) => {
     if (field.type === "checkbox") return false;
+    if (field.type === "codes") return [""];
     return "";
   };
 
@@ -73,10 +85,12 @@ export default function EntityManager({ def }: { def: EntityDef }) {
     const values: Record<string, unknown> = {};
     for (const field of def.fields) {
       const value = item[field.name] ?? emptyValue(field);
-      values[field.name] =
-        field.type === "codes" && Array.isArray(value)
-          ? (value as string[]).join("\n")
-          : value;
+      if (field.type === "codes") {
+        const list = codesValue(value);
+        values[field.name] = list.length ? list : [""];
+      } else {
+        values[field.name] = value;
+      }
     }
     setForm(values);
     setEditId(item.id);
@@ -95,7 +109,7 @@ export default function EntityManager({ def }: { def: EntityDef }) {
     try {
       const payload: Record<string, unknown> = { ...form };
       for (const field of def.fields) {
-        if (field.type === "codes") payload[field.name] = parseCodes(payload[field.name]);
+        if (field.type === "codes") payload[field.name] = cleanCodes(payload[field.name]);
       }
       const res = await fetch(editId === null ? def.api : `${def.api}/${editId}`, {
         method: editId === null ? "POST" : "PUT",
@@ -233,16 +247,49 @@ export default function EntityManager({ def }: { def: EntityDef }) {
                     <label className="mb-1.5 block text-sm font-bold">
                       {field.label[lang]}
                     </label>
-                    <textarea
-                      rows={5}
-                      dir="ltr"
-                      value={String(form[field.name] ?? "")}
-                      onChange={(e) => setForm({ ...form, [field.name]: e.target.value })}
-                      placeholder={"6291000000001\n6291000000002\n6291000000003"}
-                      className={`${inputClass} resize-none text-left`}
-                    />
+                    <div className="space-y-2">
+                      {codesValue(form[field.name]).map((code, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <input
+                            type="text"
+                            dir="ltr"
+                            value={code}
+                            onChange={(e) => {
+                              const next = [...codesValue(form[field.name])];
+                              next[index] = e.target.value;
+                              setForm({ ...form, [field.name]: next });
+                            }}
+                            placeholder="6291000000001"
+                            className={`${inputClass} text-left`}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const next = [...codesValue(form[field.name])];
+                              next.splice(index, 1);
+                              setForm({ ...form, [field.name]: next });
+                            }}
+                            className="shrink-0 rounded-full border-2 border-red-200 px-4 py-2 text-xs font-bold text-red-500 transition-colors hover:bg-red-500 hover:text-white"
+                          >
+                            {t("entity.delete")}
+                          </button>
+                        </div>
+                      ))}
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setForm({
+                            ...form,
+                            [field.name]: [...codesValue(form[field.name]), ""],
+                          })
+                        }
+                        className="rounded-full border-2 border-blush-500 px-4 py-2 text-xs font-bold text-blush-600 transition-colors hover:bg-blush-500 hover:text-white"
+                      >
+                        + {t("entity.addCode")}
+                      </button>
+                    </div>
                     <p className="mt-1.5 text-xs text-ink/50">
-                      {t("entity.codesCount")}: {parseCodes(form[field.name]).length}
+                      {t("entity.codesCount")}: {cleanCodes(form[field.name]).length}
                     </p>
                   </>
                 ) : (

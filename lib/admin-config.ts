@@ -33,8 +33,8 @@ export const ENTITY_DEFS: Record<EntityKey, EntityDef> = {
         name: "codes",
         type: "codes",
         label: {
-          ar: "أرقام العبوات — رقم فريد لكل عبوة (رقم في كل سطر)",
-          en: "Package numbers — unique per package (one per line)",
+          ar: "أرقام العبوات — رقم فريد لكل عبوة",
+          en: "Package numbers — unique per package",
         },
       },
       { name: "category", type: "text", label: { ar: "الفئة", en: "Category" } },
