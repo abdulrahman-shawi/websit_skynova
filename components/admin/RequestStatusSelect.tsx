@@ -11,11 +11,9 @@ const STATUS_LABELS: Record<string, string> = {
 export default function RequestStatusSelect({
   requestId,
   initialStatus,
-  onChanged,
 }: {
   requestId: number;
   initialStatus: string;
-  onChanged: (id: number, status: string) => void;
 }) {
   const [status, setStatus] = useState(initialStatus);
   const [busy, setBusy] = useState(false);
@@ -31,7 +29,6 @@ export default function RequestStatusSelect({
       });
       if (!res.ok) throw new Error();
       setStatus(next);
-      onChanged(requestId, next);
     } catch {
       // keep previous status
     } finally {

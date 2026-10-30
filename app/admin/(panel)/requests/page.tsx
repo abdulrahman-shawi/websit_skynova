@@ -97,7 +97,6 @@ export default async function AdminRequestsPage() {
                   <RequestStatusSelect
                     requestId={row.id}
                     initialStatus={row.status}
-                    onChanged={() => {}}
                   />
                 </span>
               </div>
