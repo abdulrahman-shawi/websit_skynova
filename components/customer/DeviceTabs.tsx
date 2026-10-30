@@ -163,7 +163,7 @@ export default function DeviceTabs({
   );
 
   return (
-    <div className="mt-4 grid gap-6 md:grid-cols-3">
+    <div className="mt-4 grid gap-6 md:grid-cols-[320px_1fr]">
       <div>
         <div className="rounded-3xl border border-blush-100 bg-white p-5 text-center shadow-sm">
           {product?.image ? (
@@ -223,7 +223,7 @@ export default function DeviceTabs({
         </div>
       </div>
 
-      <div className="md:col-span-2">
+      <div>
 
       {tab === "followup" && (
         <div className="mt-5">

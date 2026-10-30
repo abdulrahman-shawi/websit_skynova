@@ -39,7 +39,7 @@ export default async function DevicePage({
   ]);
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
+    <div className="mx-auto w-full px-4 py-10 sm:px-6 lg:px-10">
       <Link
         href="/dashboard"
         className="text-xs font-bold text-ink/50 transition-colors hover:text-blush-600"
