@@ -49,15 +49,21 @@ function formatDate(value: string): string {
 export default function DeviceTabs({
   deviceId,
   whatsapp,
-  productName,
+  product,
   barcode,
 }: {
   deviceId: number;
   whatsapp: string;
-  productName: string | null;
+  product: {
+    name: string;
+    image: string;
+    price: string;
+    guarantee: string | null;
+  } | null;
   barcode: string;
 }) {
   const [tab, setTab] = useState<"followup" | "notes" | "chat">("followup");
+  const productName = product?.name ?? null;
 
   const [requests, setRequests] = useState<RequestItem[] | null>(null);
   const [kind, setKind] = useState<string>("followup");
@@ -157,27 +163,67 @@ export default function DeviceTabs({
   );
 
   return (
-    <div>
-      <div className="grid grid-cols-3 rounded-2xl bg-blush-50 p-1">
-        {(
-          [
-            { key: "followup", label: "متابعة" },
-            { key: "notes", label: "ملاحظات" },
-            { key: "chat", label: "دردش معنا" },
-          ] as const
-        ).map((item) => (
-          <button
-            key={item.key}
-            type="button"
-            onClick={() => setTab(item.key)}
-            className={`rounded-xl py-2.5 text-sm font-bold transition-colors ${
-              tab === item.key ? "bg-white text-blush-600 shadow-sm" : "text-ink/50"
-            }`}
-          >
-            {item.label}
-          </button>
-        ))}
+    <div className="mt-4 grid gap-6 md:grid-cols-3">
+      <div>
+        <div className="rounded-3xl border border-blush-100 bg-white p-5 text-center shadow-sm">
+          {product?.image ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={product.image}
+              alt=""
+              className="mx-auto h-36 w-36 rounded-3xl border border-blush-100 object-cover"
+            />
+          ) : (
+            <span className="mx-auto flex h-36 w-36 items-center justify-center rounded-3xl bg-gradient-to-br from-blush-100 to-gold-300/40 text-4xl font-black text-blush-400">
+              {(product?.name ?? "؟").charAt(0)}
+            </span>
+          )}
+          <h1 className="mt-4 text-lg font-black leading-7">
+            {product?.name ?? "جهاز غير مسجل لدينا"}
+          </h1>
+          <p className="mt-1 text-xs text-ink/50" dir="ltr">
+            {barcode}
+          </p>
+          {(product?.price || product?.guarantee) && (
+            <div className="mt-3 flex flex-wrap items-center justify-center gap-2 text-xs">
+              {product?.price && (
+                <span className="font-bold text-blush-600">{product.price}</span>
+              )}
+              {product?.guarantee && (
+                <span className="rounded-full bg-blush-50 px-3 py-1 font-bold text-blush-700">
+                  {product.guarantee}
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+
+        <div className="mt-4 space-y-1 rounded-3xl border border-blush-100 bg-white p-2 shadow-sm">
+          {(
+            [
+              { key: "followup", label: "متابعة" },
+              { key: "notes", label: "ملاحظات" },
+              { key: "chat", label: "دردش معنا" },
+            ] as const
+          ).map((item) => (
+            <button
+              key={item.key}
+              type="button"
+              onClick={() => setTab(item.key)}
+              className={`flex w-full items-center rounded-2xl px-4 py-3 text-sm font-bold transition-colors ${
+                tab === item.key
+                  ? "bg-blush-50 text-blush-600"
+                  : "text-ink/50 hover:bg-blush-50/50 hover:text-ink"
+              }`}
+            >
+              {item.label}
+              {tab === item.key && <span className="ms-auto">←</span>}
+            </button>
+          ))}
+        </div>
       </div>
+
+      <div className="md:col-span-2">
 
       {tab === "followup" && (
         <div className="mt-5">
@@ -343,6 +389,7 @@ export default function DeviceTabs({
           </p>
         </div>
       )}
+      </div>
     </div>
   );
 }

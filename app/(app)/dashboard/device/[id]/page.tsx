@@ -39,7 +39,7 @@ export default async function DevicePage({
   ]);
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6">
+    <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
       <Link
         href="/dashboard"
         className="text-xs font-bold text-ink/50 transition-colors hover:text-blush-600"
@@ -47,47 +47,21 @@ export default async function DevicePage({
         ← عودة إلى أجهزتي
       </Link>
 
-      <div className="mt-4 flex items-center gap-4 rounded-3xl border border-blush-100 bg-white p-5 shadow-sm">
-        {product?.image ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={product.image}
-            alt=""
-            className="h-16 w-16 shrink-0 rounded-2xl border border-blush-100 object-cover"
-          />
-        ) : (
-          <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-blush-100 to-gold-300/40 text-xl font-black text-blush-400">
-            {(product?.name ?? "؟").charAt(0)}
-          </span>
-        )}
-        <div className="min-w-0">
-          <h1 className="truncate text-lg font-black">
-            {product?.name ?? "جهاز غير مسجل لدينا"}
-          </h1>
-          <p className="mt-0.5 text-xs text-ink/50" dir="ltr">
-            {device.barcode}
-          </p>
-          <div className="mt-1 flex flex-wrap gap-2 text-xs">
-            {product?.price && (
-              <span className="font-bold text-blush-600">{product.price}</span>
-            )}
-            {product?.guarantee && (
-              <span className="rounded-full bg-blush-50 px-2 py-0.5 font-bold text-blush-700">
-                {product.guarantee}
-              </span>
-            )}
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-6">
-        <DeviceTabs
-          deviceId={device.id}
-          whatsapp={contact.whatsapp}
-          productName={product?.name ?? null}
-          barcode={device.barcode}
-        />
-      </div>
+      <DeviceTabs
+        deviceId={device.id}
+        whatsapp={contact.whatsapp}
+        product={
+          product
+            ? {
+                name: product.name,
+                image: product.image,
+                price: product.price,
+                guarantee: product.guarantee,
+              }
+            : null
+        }
+        barcode={device.barcode}
+      />
     </div>
   );
 }
