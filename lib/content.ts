@@ -40,8 +40,70 @@ export async function getProducts(featuredOnly = false): Promise<Product[]> {
   }
 }
 
-export async function getFaqs(): Promise<Faq[]> {
+export type ProductReviewItem = {
+  id: number;
+  name: string;
+  rating: number;
+  comment: string;
+  createdAt: string;
+};
+
+function mapReview(row: {
+  id: number;
+  name: string;
+  rating: number;
+  comment: string;
+  createdAt: Date;
+}): ProductReviewItem {
+  return {
+    id: row.id,
+    name: row.name,
+    rating: row.rating,
+    comment: row.comment,
+    createdAt: row.createdAt.toISOString(),
+  };
+}
+
+export async function getProductById(
+  id: number
+): Promise<{ product: Product; reviews: ProductReviewItem[] } | null> {
   const db = getDb();
+  if (!db) {
+    const index = DEFAULT_PRODUCTS.findIndex((_, i) => i + 1 === id);
+    const fallback = index >= 0 ? DEFAULT_PRODUCTS[index] : undefined;
+    return fallback ? { product: { ...fallback, id: index + 1 }, reviews: [] } : null;
+  }
+  try {
+    const row = await db.product.findFirst({
+      where: { id, isActive: true },
+      include: {
+        units: { orderBy: { id: "asc" }, take: 1 },
+        reviews: { orderBy: { createdAt: "desc" } },
+      },
+    });
+    if (!row) return null;
+    return {
+      product: {
+        id: row.id,
+        name: row.name,
+        category: row.category,
+        badge: row.badge,
+        description: row.description,
+        price: row.price,
+        guarantee: row.guarantee,
+        featured: row.featured,
+        image: row.image || undefined,
+        barcode: row.units?.[0]?.code || row.barcode || undefined,
+        usage: row.usage || undefined,
+      },
+      reviews: row.reviews.map(mapReview),
+    };
+  } catch {
+    return null;
+  }
+}
+
+export async function getFaqs(): Promise<Faq[]> {  const db = getDb();
   if (!db) return DEFAULT_FAQS;
   try {
     const rows = await db.faq.findMany({

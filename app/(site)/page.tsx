@@ -212,8 +212,8 @@ export default async function Home() {
                     <span className="text-lg font-black text-blush-600">{product.price}</span>
                     <Link
                       href={
-                        product.barcode
-                          ? `/p/${encodeURIComponent(product.barcode)}`
+                        typeof product.id === "number"
+                          ? `/product/${product.id}`
                           : "/products"
                       }
                       className="rounded-full border-2 border-blush-500 px-5 py-2 text-sm font-bold text-blush-600 transition-colors hover:bg-blush-500 hover:text-white"

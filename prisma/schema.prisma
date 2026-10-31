@@ -25,8 +25,22 @@ model Product {
   updatedAt    DateTime @updatedAt @map("updated_at")
 
   units ProductUnit[]
+  reviews ProductReview[]
 
   @@map("products")
+}
+
+model ProductReview {
+  id        Int      @id @default(autoincrement())
+  productId Int      @map("product_id")
+  name      String
+  rating    Int      @default(5)
+  comment   String   @default("")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("product_reviews")
 }
 
 model ProductUnit {

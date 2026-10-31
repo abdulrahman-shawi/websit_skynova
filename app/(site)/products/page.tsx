@@ -73,9 +73,9 @@ export default async function Products() {
               <div className="mt-5 flex items-center justify-between border-t border-blush-100 pt-5">
                 <span className="text-lg font-black text-blush-600">{product.price}</span>
                 <div className="flex items-center gap-2">
-                  {product.barcode && (
+                  {typeof product.id === "number" && (
                     <Link
-                      href={`/p/${encodeURIComponent(product.barcode)}`}
+                      href={`/product/${product.id}`}
                       className="rounded-full border-2 border-blush-500 px-4 py-2 text-xs font-bold text-blush-600 transition-colors hover:bg-blush-500 hover:text-white"
                     >
                       التفاصيل
