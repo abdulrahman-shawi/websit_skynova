@@ -13,6 +13,7 @@ const NAV_ITEMS: { href: string; labelKey: StringKey }[] = [
   { href: "/admin/certificates", labelKey: "admin.certificates" },
   { href: "/admin/events", labelKey: "admin.events" },
   { href: "/admin/requests", labelKey: "admin.requests" },
+  { href: "/admin/reviews", labelKey: "admin.reviews" },
   { href: "/admin/settings", labelKey: "admin.settings" },
 ];
 

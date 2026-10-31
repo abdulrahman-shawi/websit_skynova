@@ -3,6 +3,7 @@ import { isAdminRequest } from "@/lib/api-helpers";
 import { getDb } from "@/lib/db";
 import { redirect } from "next/navigation";
 import RequestStatusSelect from "@/components/admin/RequestStatusSelect";
+import RequestReplyBox from "@/components/admin/RequestReplyBox";
 
 export const metadata: Metadata = {
   title: "طلبات المتابعة — لوحة التحكم",
@@ -25,6 +26,8 @@ export default async function AdminRequestsPage() {
     kind: string;
     message: string;
     status: string;
+    reply: string;
+    repliedAt: Date | null;
     createdAt: Date;
     customerName: string;
     customerPhone: string;
@@ -50,6 +53,8 @@ export default async function AdminRequestsPage() {
       kind: row.kind,
       message: row.message,
       status: row.status,
+      reply: row.reply,
+      repliedAt: row.repliedAt,
       createdAt: row.createdAt,
       customerName: row.device.customer.name,
       customerPhone: row.device.customer.phone,
@@ -107,6 +112,11 @@ export default async function AdminRequestsPage() {
                 الجهاز: {row.productName ?? "غير مسجل"} — باركود:{" "}
                 <span dir="ltr">{row.barcode}</span>
               </p>
+              <RequestReplyBox
+                requestId={row.id}
+                initialReply={row.reply}
+                repliedAt={row.repliedAt}
+              />
             </li>
           ))}
         </ul>

@@ -28,6 +28,8 @@ type RequestItem = {
   kind: string;
   message: string;
   status: string;
+  reply: string;
+  repliedAt: string | null;
   createdAt: string;
 };
 
@@ -305,6 +307,21 @@ export default function DeviceTabs({
                     <p className="mt-2 whitespace-pre-line text-sm leading-7 text-ink/70">
                       {item.message}
                     </p>
+                    {item.reply && (
+                      <div className="mt-3 rounded-2xl border border-blush-100 bg-blush-50/70 p-4">
+                        <p className="text-xs font-bold text-blush-600">
+                          رد فريق سكاينوفا
+                          {item.repliedAt && (
+                            <span className="ms-2 font-normal text-ink/40">
+                              {formatDate(item.repliedAt)}
+                            </span>
+                          )}
+                        </p>
+                        <p className="mt-2 whitespace-pre-line text-sm leading-7 text-ink/70">
+                          {item.reply}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 );
               })

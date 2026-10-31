@@ -130,6 +130,8 @@ model DeviceRequest {
   kind      String   @default("followup")
   message   String   @default("")
   status    String   @default("new")
+  reply     String   @default("")
+  repliedAt DateTime? @map("replied_at")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 

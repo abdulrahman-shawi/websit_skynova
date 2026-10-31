@@ -19,9 +19,26 @@ export async function PATCH(req: NextRequest, { params }: Params) {
   if (!Number.isInteger(id)) return badRequest("invalid id");
   try {
     const body = await req.json();
-    const status = typeof body?.status === "string" ? body.status : "";
-    if (!STATUSES.has(status)) return badRequest("invalid status");
-    await db.deviceRequest.update({ where: { id }, data: { status } });
+    const data: { status?: string; reply?: string; repliedAt?: Date | null } =
+      {};
+
+    if (typeof body?.status === "string") {
+      if (!STATUSES.has(body.status)) return badRequest("invalid status");
+      data.status = body.status;
+    }
+
+    if (typeof body?.reply === "string") {
+      const reply = body.reply.trim();
+      if (reply.length > 2000) return badRequest("reply too long");
+      data.reply = reply;
+      data.repliedAt = reply ? new Date() : null;
+    }
+
+    if (data.status === undefined && data.reply === undefined) {
+      return badRequest("nothing to update");
+    }
+
+    await db.deviceRequest.update({ where: { id }, data });
     return NextResponse.json({ ok: true });
   } catch {
     return serverError();
